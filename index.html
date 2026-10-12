@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>热带屿 · 我的宇宙小岛</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏝️</text></svg>">
+<style>
+  /* ========== 基础 ========== */
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:#07071a; color:#e8eaff; overflow-x:hidden;
+    animation:pagein 1.2s ease both;
+  }
+  @keyframes pagein { from{opacity:0;} to{opacity:1;} }
+  a { color:inherit; text-decoration:none; }
+
+  /* ========== 星空背景 ========== */
+  .space { position:fixed; inset:0; z-index:0; overflow:hidden;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(76,44,166,.38), transparent 55%),
+      radial-gradient(ellipse at 85% 80%, rgba(23,90,168,.32), transparent 55%),
+      linear-gradient(180deg,#07071a 0%, #0d0b26 55%, #140b30 100%);
+  }
+  .star { position:absolute; background:#fff; border-radius:50%;
+    animation:twinkle var(--d,3s) ease-in-out infinite; }
+  .star.big { box-shadow:0 0 8px 2px rgba(255,255,255,.45); }
+  @keyframes twinkle { 0%,100%{opacity:.15; transform:scale(.7);} 50%{opacity:1; transform:scale(1.2);} }
+  .nebula { position:absolute; border-radius:50%; filter:blur(90px); }
+  .n1 { width:520px; height:520px; top:-140px; left:-140px;
+    background:radial-gradient(circle, rgba(139,92,246,.5), transparent 70%);
+    animation:drift 18s ease-in-out infinite alternate; }
+  .n2 { width:480px; height:480px; bottom:-120px; right:-100px;
+    background:radial-gradient(circle, rgba(56,189,248,.4), transparent 70%);
+    animation:drift 24s ease-in-out infinite alternate-reverse; }
+  .n3 { width:380px; height:380px; top:32%; left:56%;
+    background:radial-gradient(circle, rgba(240,171,252,.32), transparent 70%);
+    animation:drift 28s ease-in-out infinite alternate; }
+  @keyframes drift { from{transform:translate(0,0) scale(1);} to{transform:translate(60px,40px) scale(1.15);} }
+  .shooting { position:absolute; height:2px; width:130px; border-radius:2px;
+    background:linear-gradient(90deg, #cfd8ff, transparent);
+    opacity:0; animation:shoot var(--sd,7s) linear infinite; animation-delay:var(--sy,0s); }
+  @keyframes shoot {
+    0%   { opacity:0; transform:translate(0,0) rotate(-32deg); }
+    4%   { opacity:1; }
+    16%  { opacity:0; transform:translate(-560px,350px) rotate(-32deg); }
+    100% { opacity:0; transform:translate(-560px,350px) rotate(-32deg); }
+  }
+
+  /* ========== 顶部悬浮导航 ========== */
+  .nav { position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:60;
+    display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:2px;
+    max-width:94vw; padding:8px 12px; border-radius:999px;
+    background:rgba(18,18,48,.55); border:1px solid rgba(255,255,255,.14);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 8px 32px rgba(0,0,0,.35); }
+  .logo { font-weight:800; font-size:1.02rem; padding:0 12px 0 6px; white-space:nowrap;
+    background:linear-gradient(120deg,#c4b5fd,#8ab6ff,#f0abfc);
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .nav a { font-size:.86rem; color:#c6c9f0; padding:7px 13px; border-radius:999px; transition:.25s; white-space:nowrap; }
+  .nav a:hover, .nav a.active { color:#fff; background:rgba(139,92,246,.28); box-shadow:0 0 14px rgba(139,92,246,.35); }
+
+  /* ========== 首屏 ========== */
+  .hero { position:relative; z-index:2; min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:120px 20px 70px; }
+  .badge { font-size:.72rem; letter-spacing:.35em; color:#9aa0c3; padding:7px 16px 7px 22px;
+    border:1px solid rgba(255,255,255,.16); border-radius:999px; margin-bottom:26px;
+    background:rgba(255,255,255,.04); }
+  .hero h1 { font-size:clamp(3.2rem,10vw,6rem); font-weight:900; letter-spacing:.1em;
+    background:linear-gradient(120deg,#d8ccff 10%,#8ab6ff 45%,#f6b8ff 90%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 26px rgba(139,92,246,.5)); }
+  .typing { margin-top:22px; font-size:clamp(1rem,2.6vw,1.25rem); color:#c6c9f0; min-height:1.9em; }
+  .caret { display:inline-block; width:2px; height:1.1em; background:#a78bfa;
+    vertical-align:-0.15em; margin-left:3px; animation:blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .hero .desc { margin-top:16px; color:#9aa0c3; max-width:560px; line-height:2.1; font-size:.95rem; }
+  .btns { margin-top:34px; display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+  .btn { padding:13px 30px; border-radius:999px; font-size:.95rem; transition:.3s; }
+  .btn.primary { background:linear-gradient(120deg,#7c5cff,#4f7dff); color:#fff;
+    box-shadow:0 8px 26px rgba(99,91,255,.45); }
+  .btn.primary:hover { transform:translateY(-3px); box-shadow:0 14px 34px rgba(99,91,255,.6); }
+  .btn.ghost { border:1px solid rgba(255,255,255,.25); color:#c6c9f0; }
+  .btn.ghost:hover { border-color:#a78bfa; color:#fff; transform:translateY(-3px);
+    box-shadow:0 0 18px rgba(139,92,246,.35); }
+  .chips { margin-top:42px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .chip { font-size:.8rem; color:#b9bdf0; background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.12); padding:8px 16px; border-radius:999px; }
+  .chip b { color:#fff; }
+  .down { position:absolute; bottom:26px; left:50%; color:#8a8fb8; font-size:1.25rem;
+    animation:bob 1.8s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{ transform:translate(-50%,0);} 50%{ transform:translate(-50%,8px);} }
+
+  /* ========== 宇航员与星球 ========== */
+  .astro-pos { position:absolute; left:10%; top:22%; z-index:1; }
+  .astro { animation:floaty 6s ease-in-out infinite alternate;
+    filter:drop-shadow(0 0 18px rgba(139,92,246,.35)); }
+  @keyframes floaty { from{ transform:translateY(-10px) rotate(-3deg);}
+                      to{ transform:translateY(12px) rotate(3deg);} }
+  .planet-pos { position:absolute; right:7%; bottom:12%; z-index:1; }
+  .planet-ani { position:relative; animation:floaty 9s ease-in-out infinite alternate-reverse; }
+  .planet { position:relative; width:150px; height:150px; border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #c3a6ff, #7c5cff 48%, #3b2a86 82%, #241a5e);
+    box-shadow:inset -16px -14px 34px rgba(0,0,0,.5), 0 0 60px rgba(139,92,246,.4); }
+  .palm { position:absolute; top:-20px; left:24px; font-size:34px; transform:rotate(-8deg);
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
+  .ring { position:absolute; left:50%; top:52%; width:230px; height:64px;
+    transform:translate(-50%,-50%) rotate(-16deg);
+    border:2px solid rgba(196,181,253,.5); border-radius:50%; }
+  @media (max-width:820px) {
+    .astro-pos { left:2%; top:11%; transform:scale(.55); transform-origin:top left; }
+    .planet-pos { right:0; bottom:5%; transform:scale(.62); transform-origin:bottom right; }
+  }
+
+  /* ========== 卡片区域 ========== */
+  .section { position:relative; z-index:2; max-width:1080px; margin:0 auto; padding:70px 20px 30px; }
+  .sec-head { text-align:center; margin-bottom:44px; }
+  .sec-head h2 { font-size:clamp(1.6rem,4vw,2.2rem); letter-spacing:.06em; }
+  .sec-head h2 span { background:linear-gradient(120deg,#c4b5fd,#8ab6ff);
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sec-head p { color:#9aa0c3; margin-top:10px; font-size:.92rem; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:22px; }
+  .card { position:relative; display:block; padding:30px 26px; border-radius:22px; overflow:hidden;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); transition:.35s; }
+  .card::before { content:""; position:absolute; inset:0; opacity:0; transition:.35s;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(139,92,246,.2), transparent 60%); }
+  .card:hover { transform:translateY(-8px); border-color:rgba(167,139,250,.55);
+    box-shadow:0 18px 44px rgba(90,60,220,.3); }
+  .card:hover::before { opacity:1; }
+  .card .ico { font-size:2.1rem; display:inline-block; margin-bottom:16px;
+    filter:drop-shadow(0 0 12px rgba(139,92,246,.6)); }
+  .card h3 { font-size:1.12rem; margin-bottom:10px; letter-spacing:.04em; }
+  .card p { font-size:.88rem; color:#9aa0c3; line-height:1.9; }
+  .card .go { display:inline-block; margin-top:18px; font-size:.82rem; color:#a78bfa; transition:.3s; }
+  .card:hover .go { color:#fff; }
+  .reveal { opacity:0; transform:translateY(30px); transition:opacity .8s ease, transform .8s ease; }
+  .reveal.on { opacity:1; transform:none; }
+
+  /* ========== 每日语 & 页脚 ========== */
+  .quote { position:relative; z-index:2; text-align:center; padding:70px 20px 20px; }
+  .quote .q { font-size:1.05rem; color:#c6c9f0; }
+  .quote .src { margin-top:12px; font-size:.78rem; color:#8a8fb8; letter-spacing:.25em; }
+  footer { position:relative; z-index:2; text-align:center; padding:50px 20px 42px;
+    color:#8a8fb8; font-size:.85rem; line-height:2.2; }
+  footer .stars-line { letter-spacing:.6em; color:#5b5f8f; margin-bottom:10px; }
+  footer .idinfo { color:#b9bdf0; }
+
+  /* ========== 鼠标星尘 ========== */
+  .spark { position:fixed; z-index:999; pointer-events:none; animation:spark .9s ease-out forwards; }
+  @keyframes spark { 0%{ opacity:1; transform:translate(-50%,-50%) scale(.4);}
+                     100%{ opacity:0; transform:translate(-50%,14px) scale(1.25);} }
+</style>
+</head>
+<body>
+
+<!-- 星空背景 -->
+<div class="space" id="space">
+  <div class="nebula n1"></div><div class="nebula n2"></div><div class="nebula n3"></div>
+  <div class="shooting" style="top:16%; left:80%; --sd:7s; --sy:2s;"></div>
+  <div class="shooting" style="top:7%; left:52%; --sd:9s; --sy:5.5s;"></div>
+</div>
+
+<!-- 顶部导航 -->
+<nav class="nav">
+  <span class="logo">🏝 热带屿</span>
+  <a class="active" href="index.html">首页</a>
+  <a href="about.html">关于我</a>
+  <a href="works.html">作品集</a>
+  <a href="ideas.html">灵感墙</a>
+  <a href="tools.html">学习舱</a>
+  <a href="growth.html">成长足迹</a>
+</nav>
+
+<!-- 首屏 -->
+<header class="hero">
+  <div class="astro-pos"><div class="astro">
+    <svg width="150" height="170" viewBox="0 0 200 230" fill="none">
+      <line x1="100" y1="30" x2="100" y2="14" stroke="#f4f6ff" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="100" cy="12" r="4" fill="#ffd166"/>
+      <rect x="76" y="160" width="20" height="42" rx="10" fill="#e9edff"/>
+      <rect x="104" y="160" width="20" height="42" rx="10" fill="#e9edff"/>
+      <rect x="70" y="196" width="30" height="15" rx="7" fill="#8b93d6"/>
+      <rect x="100" y="196" width="30" height="15" rx="7" fill="#8b93d6"/>
+      <rect x="44" y="104" width="16" height="50" rx="8" fill="#e9edff" transform="rotate(22 52 104)"/>
+      <rect x="140" y="104" width="16" height="50" rx="8" fill="#e9edff" transform="rotate(-22 148 104)"/>
+      <rect x="58" y="106" width="12" height="40" rx="6" fill="#c7cdf2"/>
+      <rect x="130" y="106" width="12" height="40" rx="6" fill="#c7cdf2"/>
+      <rect x="70" y="94" width="60" height="68" rx="20" fill="#f4f6ff"/>
+      <rect x="86" y="116" width="28" height="22" rx="6" fill="#232a5c"/>
+      <circle cx="93" cy="127" r="2.6" fill="#7ee0ff"/>
+      <circle cx="100" cy="127" r="2.6" fill="#ffd166"/>
+      <circle cx="107" cy="127" r="2.6" fill="#ff9de2"/>
+      <circle cx="100" cy="62" r="34" fill="#f4f6ff"/>
+      <circle cx="100" cy="62" r="24" fill="#1b2350"/>
+      <ellipse cx="91" cy="53" rx="8" ry="4.6" fill="#ffffff" opacity="0.5" transform="rotate(-22 91 53)"/>
+    </svg>
+  </div></div>
+
+  <div class="planet-pos"><div class="planet-ani">
+    <div class="planet"><span class="palm">🌴</span></div>
+    <div class="ring"></div>
+  </div></div>
+
+  <div class="badge">✦ TROPICAL ISLE IN THE COSMOS ✦</div>
+  <h1>热带屿</h1>
+  <p class="typing"><span id="typed"></span><span class="caret"></span></p>
+  <p class="desc">一座漂浮在宇宙中的私人小岛：陈列我的作品，收集一闪而过的灵感，
+    记录每一天的打卡与成长。愿每一颗种子，都能在这里长成棕榈树。🌴✨</p>
+
+  <div class="btns">
+    <a class="btn primary" href="#island">🌙 开始探索</a>
+    <a class="btn ghost" href="about.html">🧑‍🚀 舰员档案</a>
+  </div>
+
+  <div class="chips">
+    <span class="chip">🏝 建岛 <b id="d-island">1</b> 天</span>
+    <span class="chip">✦ 星光加载 100%</span>
+  </div>
+  <div class="down">↓</div>
+</header>
+
+<!-- 岛上区域 -->
+<section class="section" id="island">
+  <div class="sec-head reveal">
+    <h2>🗺️ <span>岛上区域</span></h2>
+    <p>点击卡片，前往小岛的不同区域</p>
+  </div>
+  <div class="grid">
+    <a class="card reveal" href="works.html">
+      <span class="ico">🎨</span><h3>作品集</h3>
+      <p>星光陈列馆：课程作业、项目案例与比赛作品，都会在这里闪闪发光。</p>
+      <span class="go">进入陈列馆 →</span>
+    </a>
+    <a class="card reveal" href="ideas.html">
+      <span class="ico">💡</span><h3>灵感墙</h3>
+      <p>一张捕星网：随时粘住每一个一闪而过的念头、书摘与脑洞。</p>
+      <span class="go">去捕星 →</span>
+    </a>
+    <a class="card reveal" href="tools.html">
+      <span class="ico">🛰️</span><h3>学习舱</h3>
+      <p>小岛驾驶舱：日历打卡、待办清单、项目看板，学习节奏由我掌控。</p>
+      <span class="go">进入驾驶舱 →</span>
+    </a>
+    <a class="card reveal" href="growth.html">
+      <span class="ico">🚀</span><h3>成长足迹</h3>
+      <p>航行日志：用时间轴记下每一次起航、每一段里程碑。</p>
+      <span class="go">查看日志 →</span>
+    </a>
+    <a class="card reveal" href="about.html">
+      <span class="ico">👤</span><h3>关于我</h3>
+      <p>舰员档案：姓名、学号、班级，以及我的成长目标。</p>
+      <span class="go">查看档案 →</span>
+    </a>
+  </div>
+</section>
+
+<!-- 每日语 -->
+<section class="quote reveal">
+  <p class="q" id="quote"></p>
+  <p class="src">— ✦ 今日星语 ✦</p>
+</section>
+
+<footer>
+  <div class="stars-line">✦ ✦ ✦</div>
+  <p>© 2026 热带屿 TROPICAL ISLE · 由岛主亲自驾驶 🧑‍🚀</p>
+  <!-- ✏️ 个人信息：把下面三个【】里的文字替换成你的真实信息 -->
+  <p class="idinfo">【huangsai】 ｜ 学号：【202410811402】 ｜ 班级：【24级工商管理4班】</p>
+</footer>
+
+<script>
+  // ===== 生成星空 =====
+  const space = document.getElementById('space');
+  for (let i = 0; i < 150; i++) {
+    const s = document.createElement('div');
+    s.className = 'star' + (i < 8 ? ' big' : '');
+    const size = i < 8 ? Math.random() * 1.6 + 2.4 : Math.random() * 1.8 + 0.6;
+    s.style.width = s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.setProperty('--d', (Math.random() * 4 + 2) + 's');
+    s.style.animationDelay = (Math.random() * 5) + 's';
+    space.appendChild(s);
+  }
+
+  // ===== 打字机 =====
+  const lines = [
+    "欢迎登陆这座漂浮在星海中的小岛 🏝",
+    "这里收藏我的作品、灵感与每一天的努力 ✨",
+    "Learning · Creating · Recording 🚀"
+  ];
+  let li = 0, ci = 0, deleting = false;
+  const typed = document.getElementById('typed');
+  function tick() {
+    const cur = lines[li];
+    typed.textContent = cur.slice(0, ci);
+    if (!deleting) {
+      ci++;
+      if (ci > cur.length) { deleting = true; return setTimeout(tick, 2300); }
+    } else {
+      ci--;
+      if (ci === 0) { deleting = false; li = (li + 1) % lines.length; }
+    }
+    setTimeout(tick, deleting ? 40 : 110);
+  }
+  tick();
+
+  // ===== 今日星语（每天自动换一句）=====
+  const quotes = [
+    "把每一次普通的努力，都当成一次悄悄的发射。",
+    "星星不会因为黑夜太长而拒绝升起，我也一样。",
+    "灵感像流星，出现的那一秒就把它抓住。",
+    "打卡不是任务，是发给未来自己的信号。",
+    "在成为很厉害的人之前，先成为每天都在的人。",
+    "小岛不着急长大，它只是每天都在生长。"
+  ];
+  const day = Math.floor(Date.now() / 864e5);
+  document.getElementById('quote').textContent = quotes[day % quotes.length];
+
+  // ===== 建岛天数 & 倒计时 =====
+  // ✏️ 想改日期在这里改：new Date(年, 月-1, 日)，注意月份从 0 开始数
+  const startDay = new Date(2026, 9, 12);   // 建岛日：2026年10月12日
+  document.getElementById('d-island').textContent =
+    Math.max(1, Math.floor((Date.now() - startDay) / 864e5) + 1);
+
+  // ===== 滚动显现 =====
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+  }), { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ===== 卡片跟随光晕 =====
+  document.querySelectorAll('.card').forEach(c => {
+    c.addEventListener('pointermove', ev => {
+      const r = c.getBoundingClientRect();
+      c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+      c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+    });
+  });
+
+  // ===== 鼠标星尘 =====
+  const colors = ['#c4b5fd', '#8ab6ff', '#f0abfc', '#ffffff'];
+  document.addEventListener('pointermove', e => {
+    if (Math.random() > 0.35) return;
+    const s = document.createElement('div');
+    s.className = 'spark';
+    s.textContent = Math.random() > 0.5 ? '✦' : '✧';
+    s.style.left = e.clientX + 'px';
+    s.style.top = e.clientY + 'px';
+    s.style.color = colors[Math.floor(Math.random() * colors.length)];
+    s.style.fontSize = (Math.random() * 8 + 8) + 'px';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 900);
+  });
+</script>
+</body>
+</html>

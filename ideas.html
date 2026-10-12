@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灵感墙 · 热带屿</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#07071a;color:#e8eaff;min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.space{position:fixed;inset:0;z-index:0;overflow:hidden;background:radial-gradient(ellipse at 20% 10%,rgba(76,44,166,.38),transparent 55%),radial-gradient(ellipse at 85% 80%,rgba(23,90,168,.32),transparent 55%),linear-gradient(180deg,#07071a,#0d0b26 55%,#140b30)}
+.star{position:absolute;background:#fff;border-radius:50%;animation:tw var(--d,3s) ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
+.nebula{position:absolute;border-radius:50%;filter:blur(90px)}
+.n1{width:460px;height:460px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%)}
+.n2{width:420px;height:420px;bottom:-100px;right:-90px;background:radial-gradient(circle,rgba(56,189,248,.35),transparent 70%)}
+.nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:2px;max-width:94vw;padding:8px 12px;border-radius:999px;background:rgba(18,18,48,.55);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px)}
+.logo{font-weight:800;font-size:1rem;padding:0 12px 0 6px;background:linear-gradient(120deg,#c4b5fd,#8ab6ff,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav a{font-size:.86rem;color:#c6c9f0;padding:7px 13px;border-radius:999px;transition:.25s}
+.nav a:hover,.nav a.active{color:#fff;background:rgba(139,92,246,.28)}
+.wrap{position:relative;z-index:2;max-width:1060px;margin:0 auto;padding:110px 20px 50px}
+.page-head{text-align:center;margin-bottom:30px}
+.page-head h1{font-size:clamp(1.8rem,5vw,2.4rem);background:linear-gradient(120deg,#c4b5fd,#8ab6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.page-head p{color:#9aa0c3;font-size:.88rem;margin-top:8px;letter-spacing:.15em}
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:24px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip2{font-size:.8rem;color:#c6c9f0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);padding:7px 15px;border-radius:999px;cursor:pointer;transition:.25s;font-family:inherit}
+.chip2.on{background:rgba(139,92,246,.3);border-color:rgba(167,139,250,.6);color:#fff}
+.addbtn{background:linear-gradient(120deg,#7c5cff,#4f7dff)!important;border:none!important;color:#fff!important;box-shadow:0 4px 14px rgba(99,91,255,.4)}
+.addbtn:hover{transform:translateY(-2px)}
+.resetbtn{color:#8a8fb8!important;font-size:.72rem!important}
+.resetbtn:hover{color:#fca5a5!important;border-color:rgba(248,113,113,.45)!important}
+.sinput{flex:0 1 220px;background:rgba(10,10,30,.6);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:9px 18px;color:#fff;font-size:.88rem;font-family:inherit}
+.sinput:focus{outline:none;border-color:#a78bfa;box-shadow:0 0 10px rgba(139,92,246,.35)}
+.cnt{font-size:.78rem;color:#8a8fb8;width:100%}
+.masonry{column-count:3;column-gap:18px}
+@media(max-width:900px){.masonry{column-count:2}}
+@media(max-width:600px){.masonry{column-count:1}}
+.icard{position:relative;break-inside:avoid;margin-bottom:18px;border-radius:18px;padding:20px 22px;
+  background:rgba(255,255,255,.05);border:1px solid hsla(var(--h),70%,68%,.35);
+  backdrop-filter:blur(10px);transition:.3s;animation:fadeup .6s ease both}
+@keyframes fadeup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.icard:hover{transform:translateY(-5px);border-color:hsla(var(--h),80%,72%,.7);box-shadow:0 14px 36px hsla(var(--h),70%,50%,.25)}
+.ops{position:absolute;top:12px;right:14px;display:flex;gap:6px;opacity:0;transition:.25s;z-index:3}
+.icard:hover .ops{opacity:1}
+@media(hover:none){.ops{opacity:.75}}
+.op{width:28px;height:28px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(20,18,50,.72);color:#c6c9f0;cursor:pointer;font-size:.78rem;transition:.2s;font-family:inherit;backdrop-filter:blur(4px)}
+.op:hover{border-color:#a78bfa;color:#fff}
+.op.danger:hover{border-color:rgba(248,113,113,.6);color:#fca5a5}
+.icard h3{font-size:1.02rem;margin-bottom:10px;padding-right:74px;line-height:1.6}
+.itext{font-size:.9rem;color:#c6c9f0;line-height:2;word-break:break-all}
+.itags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.itag{font-size:.7rem;padding:4px 12px;border-radius:999px;background:hsla(var(--h),70%,60%,.14);border:1px solid hsla(var(--h),70%,65%,.35);color:hsl(var(--h),80%,82%)}
+.ifoot{margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+.idate{font-size:.72rem;color:#5b5f8f}
+.empty{text-align:center;color:#8a8fb8;padding:60px 20px}
+.tip{text-align:center;color:#8a8fb8;font-size:.8rem;margin-top:26px;line-height:1.9}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(5,5,20,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.mbox{width:min(460px,100%);background:#12102e;border:1px solid rgba(167,139,250,.35);border-radius:20px;padding:22px;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.mhead h3{font-size:1.05rem;background:linear-gradient(120deg,#c4b5fd,#8ab6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.xbtn{width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;font-family:inherit}
+.mbox label{display:block;font-size:.8rem;color:#9aa0c3;margin:13px 0 6px}
+.minput{width:100%;background:rgba(10,10,30,.6);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 12px;color:#fff;font-size:.9rem;font-family:inherit}
+.minput:focus{outline:none;border-color:#a78bfa;box-shadow:0 0 10px rgba(139,92,246,.35)}
+textarea.minput{resize:vertical;min-height:110px;line-height:1.8}
+.ebtns{display:flex;gap:12px;margin-top:20px}
+.btn2{padding:12px 26px;border-radius:999px;border:none;cursor:pointer;font-size:.9rem;transition:.3s;font-family:inherit}
+.btn2.exp{background:linear-gradient(120deg,#7c5cff,#4f7dff);color:#fff;box-shadow:0 6px 18px rgba(99,91,255,.4)}
+.btn2.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);color:#c6c9f0}
+.btn2:hover{transform:translateY(-2px)}
+#toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(20px);background:rgba(30,26,66,.92);border:1px solid rgba(167,139,250,.5);color:#fff;padding:12px 26px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:.35s;z-index:200;box-shadow:0 8px 30px rgba(0,0,0,.5);backdrop-filter:blur(8px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{position:relative;z-index:2;text-align:center;padding:36px 20px 30px;color:#5b5f8f;font-size:.8rem}
+footer a{color:#a78bfa}
+</style>
+</head>
+<body>
+<div class="space" id="space"><div class="nebula n1"></div><div class="nebula n2"></div></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     初始内容（种子数据）——「文件轨道」：写在这里的内容 = 对外公开的底稿
+     ▸ 新浏览器第一次打开本页时，载入这些卡片作为起点
+     ▸ 页面上的增删改存在当前浏览器里，不会写回本文件
+     ▸ 想让某条灵感「对外公开」：把它写进这里 → 部署后上传 → 全网可见
+     ▸ 文件内容更新后，在页面上点「↺ 恢复文件初始内容」即可载入新版
+     ══════════════════════════════════════════════════════════ -->
+<script>
+const IDEAS_SEED = [
+  { title: "👋 欢迎来到灵感墙", text: "点「＋ 记一条灵感」新增卡片；鼠标移到卡片上（手机上看右上角）会出现 ✎ 修改和 🗑 删除。内容保存在当前浏览器里，下次打开还在。这条示例用完可以删掉。", tags: ["使用说明"], date: "2026.10" },
+  { title: "读书笔记 · 示例", text: "「星星不会因为黑夜太长而拒绝升起。」——把书里击中你的句子抄下来，几年后回看，会看到自己思想生长的年轮。", tags: ["读书笔记", "摘抄"], date: "2026.10" },
+  { title: "点子 · 网页小游戏", text: "想做一个「星际钓鱼」小游戏：在星海里钓星星，钓到不同颜色的星解锁不同岛屿——也许就是作品集的下一个作品。", tags: ["点子", "游戏"], date: "" }
+];
+</script>
+<!-- ══════════════ 种子数据结束，以下内容不用动 ══════════════ -->
+
+<nav class="nav">
+  <span class="logo">🏝 热带屿</span>
+  <a href="index.html">首页</a>
+  <a href="about.html">关于我</a>
+  <a href="works.html">作品集</a>
+  <a class="active" href="ideas.html">灵感墙</a>
+  <a href="tools.html">学习舱</a>
+  <a href="growth.html">成长足迹</a>
+</nav>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>💡 灵感墙</h1>
+    <p>IDEA WALL · 用一张捕星网，接住每一个一闪而过的念头</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="chips" id="chips"></div>
+    <input class="sinput" id="kwInput" placeholder="🔍 搜索标题、内容或标签…">
+    <button class="chip2 addbtn" id="addBtn">＋ 记一条灵感</button>
+    <span class="cnt" id="total"></span>
+  </div>
+
+  <div class="masonry" id="wall"></div>
+  <div class="empty" id="empty" style="display:none">🌌 还没有灵感——点「＋ 记一条灵感」写下第一个念头</div>
+  <p class="tip">💡 页面编辑保存在当前浏览器，下次打开仍在 · 「↺ 恢复文件初始内容」= 丢弃本机编辑、重新读取文件里的种子数据<br>📱 手机与电脑的浏览器各自独立保存；整体迁移用「学习舱 → 数据备份」导出/导入</p>
+</main>
+
+<div class="modal" id="editModal">
+  <div class="mbox">
+    <div class="mhead"><h3 id="emTitle">✏️ 记一条灵感</h3><button class="xbtn" id="emClose">✕</button></div>
+    <label>标题（选填）</label>
+    <input class="minput" id="efTitle" maxlength="60" placeholder="给这个念头起个名字">
+    <label>正文 *</label>
+    <textarea class="minput" id="efText" placeholder="写下来——一闪而过的念头、书摘、备忘…"></textarea>
+    <label>标签（逗号或空格分隔 · 第一个标签决定卡片光晕颜色）</label>
+    <input class="minput" id="efTags" placeholder="如：读书笔记, 点子">
+    <label>日期小签（选填）</label>
+    <input class="minput" id="efDate" maxlength="20" placeholder="如：2026.10">
+    <div class="ebtns">
+      <button class="btn2 exp" id="emSave">✔️ 保存</button>
+      <button class="btn2 ghost" id="emCancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<footer>✦ 热带屿 · <a href="index.html">返回首页</a></footer>
+
+<script>
+/* ================= 数据层：页面编辑 + 浏览器保存 ================= */
+const STORE_KEY='isle_ideas_v1';
+let IDEAS=(function(){
+  try{const v=JSON.parse(localStorage.getItem(STORE_KEY));if(Array.isArray(v))return v;}catch(e){}
+  const seed=JSON.parse(JSON.stringify(IDEAS_SEED));
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(seed));}catch(e){}
+  return seed;
+})();
+function persist(){try{localStorage.setItem(STORE_KEY,JSON.stringify(IDEAS));}catch(e){}}
+
+let tag='全部', kw='';
+const $=i=>document.getElementById(i);
+const esc=s=>String(s??'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h;}
+const hueOf=s=>210+hash(s||'star')%120;
+
+function render(){
+  const cnt={};
+  IDEAS.forEach(w=>(w.tags||[]).forEach(t=>cnt[t]=(cnt[t]||0)+1));
+  const tags=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
+  $('chips').innerHTML=`<button class="chip2${tag==='全部'?' on':''}" data-t="全部">全部 ${IDEAS.length}</button>`
+    +tags.map(t=>`<button class="chip2${t===tag?' on':''}" data-t="${esc(t)}">${esc(t)} ${cnt[t]}</button>`).join('')
+    +`<button class="chip2 resetbtn" id="resetBtn" title="丢弃本机编辑，重新读取文件里的初始内容">↺ 恢复文件初始内容</button>`;
+  document.querySelectorAll('.chip2[data-t]').forEach(b=>b.onclick=()=>{tag=b.dataset.t;render();});
+  $('resetBtn').onclick=()=>{
+    if(confirm('将丢弃本页在浏览器中的全部编辑，恢复为文件里写死的初始内容（种子数据）。\n\n若本机编辑里有想保留的灵感，请先导出备份！\n\n确定恢复吗？')){
+      try{localStorage.removeItem(STORE_KEY);}catch(e){}
+      location.reload();
+    }
+  };
+
+  const k=kw.toLowerCase();
+  const list=IDEAS.filter(w=>{
+    const okTag=tag==='全部'||(w.tags||[]).includes(tag);
+    const blob=((w.title||'')+' '+(w.text||'')+' '+(w.tags||[]).join(' ')).toLowerCase();
+    return okTag&&(!k||blob.includes(k));
+  });
+  $('total').textContent='共 '+list.length+' 条灵感';
+  $('empty').style.display=list.length?'none':'block';
+  $('wall').innerHTML=list.map(w=>{
+    const gi=IDEAS.indexOf(w);
+    const h=hueOf((w.tags&&w.tags[0])||w.title);
+    return `<div class="icard" style="--h:${h}">
+      <div class="ops">
+        <button class="op" data-edit="${gi}" title="编辑">✎</button>
+        <button class="op danger" data-del="${gi}" title="删除">🗑</button>
+      </div>
+      ${w.title?`<h3>${esc(w.title)}</h3>`:''}
+      <p class="itext">${esc(w.text).replace(/\n/g,'<br>')}</p>
+      ${(w.tags&&w.tags.length)?`<div class="itags">${w.tags.map(t=>`<span class="itag" style="--h:${hueOf(t)}">${esc(t)}</span>`).join('')}</div>`:''}
+      ${w.date?`<div class="ifoot"><span class="idate">✦ ${esc(w.date)}</span></div>`:''}
+    </div>`;
+  }).join('');
+  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openEdit(Number(b.dataset.edit)));
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delIdea(Number(b.dataset.del)));
+}
+$('kwInput').addEventListener('input',e=>{kw=e.target.value.trim();render();});
+
+/* ================= 编辑弹窗 ================= */
+let editIdx=-1;
+function openModal(){$('editModal').classList.add('open');}
+function closeModal(){$('editModal').classList.remove('open');editIdx=-1;}
+function parseTags(s){return [...new Set(s.split(/[,，、;；\s]+/).map(t=>t.trim()).filter(Boolean))].slice(0,6);}
+function openAdd(){
+  editIdx=-1;
+  $('emTitle').textContent='✏️ 记一条灵感';
+  $('efTitle').value='';$('efText').value='';$('efTags').value='';$('efDate').value='';
+  openModal();setTimeout(()=>$('efText').focus(),60);
+}
+function openEdit(i){
+  const w=IDEAS[i];if(!w)return;editIdx=i;
+  $('emTitle').textContent='✏️ 编辑灵感';
+  $('efTitle').value=w.title||'';$('efText').value=w.text||'';
+  $('efTags').value=(w.tags||[]).join(', ');$('efDate').value=w.date||'';
+  openModal();setTimeout(()=>$('efText').focus(),60);
+}
+$('emSave').onclick=()=>{
+  const text=$('efText').value.trim();
+  if(!text){toast('正文还没写哦');return;}
+  const item={title:$('efTitle').value.trim(),text,tags:parseTags($('efTags').value),date:$('efDate').value.trim()};
+  if(editIdx<0){IDEAS.unshift(item);toast('✦ 灵感已上墙');}
+  else{IDEAS[editIdx]=item;toast('✅ 已保存修改');}
+  persist();closeModal();render();
+};
+$('emCancel').onclick=closeModal;
+$('emClose').onclick=closeModal;
+$('editModal').onclick=e=>{if(e.target===$('editModal'))closeModal();};
+$('addBtn').onclick=openAdd;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+function delIdea(i){
+  const w=IDEAS[i];if(!w)return;
+  if(confirm('删除这条灵感「'+(w.title||w.text.slice(0,14)+'…')+'」？')){
+    IDEAS.splice(i,1);persist();render();toast('🗑️ 已删除');
+  }
+}
+
+/* ================= 轻提示 ================= */
+let toastTimer;
+function toast(msg){
+  const t=$('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+const sp=document.getElementById('space');
+for(let i=0;i<110;i++){const s=document.createElement('div');s.className='star';
+const z=Math.random()*1.8+.6;s.style.width=s.style.height=z+'px';
+s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';
+s.style.setProperty('--d',(Math.random()*4+2)+'s');s.style.animationDelay=Math.random()*5+'s';
+sp.appendChild(s);}
+render();
+</script>
+</body>
+</html>

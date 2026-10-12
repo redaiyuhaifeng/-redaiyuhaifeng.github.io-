@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>舰员档案 · 热带屿</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#07071a;color:#e8eaff;min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.space{position:fixed;inset:0;z-index:0;overflow:hidden;background:radial-gradient(ellipse at 20% 10%,rgba(76,44,166,.38),transparent 55%),radial-gradient(ellipse at 85% 80%,rgba(23,90,168,.32),transparent 55%),linear-gradient(180deg,#07071a,#0d0b26 55%,#140b30)}
+.star{position:absolute;background:#fff;border-radius:50%;animation:tw var(--d,3s) ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
+.nebula{position:absolute;border-radius:50%;filter:blur(90px)}
+.n1{width:460px;height:460px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%)}
+.n2{width:420px;height:420px;bottom:-100px;right:-90px;background:radial-gradient(circle,rgba(56,189,248,.35),transparent 70%)}
+.nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:2px;max-width:94vw;padding:8px 12px;border-radius:999px;background:rgba(18,18,48,.55);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px)}
+.logo{font-weight:800;font-size:1rem;padding:0 12px 0 6px;background:linear-gradient(120deg,#c4b5fd,#8ab6ff,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav a{font-size:.86rem;color:#c6c9f0;padding:7px 13px;border-radius:999px;transition:.25s}
+.nav a:hover,.nav a.active{color:#fff;background:rgba(139,92,246,.28)}
+.wrap{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:110px 20px 50px}
+.page-head{text-align:center;margin-bottom:30px}
+.page-head h1{font-size:clamp(1.8rem,5vw,2.4rem);background:linear-gradient(120deg,#c4b5fd,#8ab6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.page-head p{color:#9aa0c3;font-size:.88rem;margin-top:8px;letter-spacing:.15em}
+.profile{position:relative;background:rgba(255,255,255,.05);border:1px solid rgba(167,139,250,.3);border-radius:26px;padding:40px 34px;backdrop-filter:blur(12px);box-shadow:0 20px 60px rgba(0,0,0,.35);animation:fadeup .7s ease both}
+@keyframes fadeup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.ops{position:absolute;top:16px;right:16px;display:flex;gap:8px}
+.op{width:32px;height:32px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(20,18,50,.72);color:#c6c9f0;cursor:pointer;font-size:.85rem;transition:.2s;font-family:inherit;backdrop-filter:blur(4px)}
+.op:hover{border-color:#a78bfa;color:#fff}
+.op.danger:hover{border-color:rgba(248,113,113,.6);color:#fca5a5}
+.avatar{width:96px;height:96px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(56,189,248,.3));border:2px solid rgba(167,139,250,.5);box-shadow:0 0 30px rgba(139,92,246,.4)}
+.pname{text-align:center;font-size:1.5rem;font-weight:800;background:linear-gradient(120deg,#c4b5fd,#8ab6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:.7rem;color:#34d399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.4);padding:3px 12px;border-radius:999px;margin-left:8px;vertical-align:middle}
+.meta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:18px 0 4px}
+.meta span{font-size:.82rem;color:#c6c9f0;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);padding:6px 16px;border-radius:999px}
+.meta b{color:#fff;font-weight:600}
+.motto{text-align:center;font-size:1.02rem;color:#c4b5fd;font-style:italic;margin:20px auto 6px;max-width:520px;line-height:1.9}
+.sect{margin-top:28px}
+.sect h3{font-size:1rem;color:#c4b5fd;margin-bottom:12px;letter-spacing:.05em}
+.skillbox{display:flex;flex-wrap:wrap;gap:8px}
+.skill{font-size:.8rem;color:#c6c9f0;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.35);padding:7px 16px;border-radius:999px;transition:.25s}
+.skill:hover{background:rgba(139,92,246,.25);color:#fff;transform:translateY(-2px)}
+.goals{list-style:none}
+.goals li{position:relative;font-size:.9rem;color:#c6c9f0;line-height:1.9;padding:6px 0 6px 26px}
+.goals li::before{content:"✦";position:absolute;left:2px;color:#8ab6ff}
+.intro{font-size:.92rem;color:#c6c9f0;line-height:2.1;white-space:pre-wrap}
+.crewid{text-align:center;font-size:.72rem;color:#5b5f8f;letter-spacing:.25em;margin-top:30px}
+.toolbar2{display:flex;justify-content:center;gap:10px;margin-top:26px;flex-wrap:wrap}
+.chip2{font-size:.8rem;color:#c6c9f0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);padding:8px 18px;border-radius:999px;cursor:pointer;transition:.25s;font-family:inherit}
+.addbtn{background:linear-gradient(120deg,#7c5cff,#4f7dff)!important;border:none!important;color:#fff!important;box-shadow:0 4px 14px rgba(99,91,255,.4)}
+.addbtn:hover{transform:translateY(-2px)}
+.resetbtn{color:#8a8fb8!important;font-size:.72rem!important}
+.resetbtn:hover{color:#fca5a5!important;border-color:rgba(248,113,113,.45)!important}
+.tip{text-align:center;color:#8a8fb8;font-size:.8rem;margin-top:26px;line-height:1.9}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(5,5,20,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.mbox{width:min(480px,100%);background:#12102e;border:1px solid rgba(167,139,250,.35);border-radius:20px;padding:22px;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.mhead h3{font-size:1.05rem;background:linear-gradient(120deg,#c4b5fd,#8ab6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.xbtn{width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;font-family:inherit}
+.mbox label{display:block;font-size:.8rem;color:#9aa0c3;margin:13px 0 6px}
+.minput{width:100%;background:rgba(10,10,30,.6);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 12px;color:#fff;font-size:.9rem;font-family:inherit}
+.minput:focus{outline:none;border-color:#a78bfa;box-shadow:0 0 10px rgba(139,92,246,.35)}
+textarea.minput{resize:vertical;min-height:90px;line-height:1.8}
+.mnote{font-size:.72rem;color:#5b5f8f;margin-top:4px;line-height:1.7}
+.ebtns{display:flex;gap:12px;margin-top:20px}
+.btn2{padding:12px 26px;border-radius:999px;border:none;cursor:pointer;font-size:.9rem;transition:.3s;font-family:inherit}
+.btn2.exp{background:linear-gradient(120deg,#7c5cff,#4f7dff);color:#fff;box-shadow:0 6px 18px rgba(99,91,255,.4)}
+.btn2.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);color:#c6c9f0}
+.btn2:hover{transform:translateY(-2px)}
+#toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(20px);background:rgba(30,26,66,.92);border:1px solid rgba(167,139,250,.5);color:#fff;padding:12px 26px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:.35s;z-index:200;box-shadow:0 8px 30px rgba(0,0,0,.5);backdrop-filter:blur(8px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{position:relative;z-index:2;text-align:center;padding:36px 20px 30px;color:#5b5f8f;font-size:.8rem}
+footer a{color:#a78bfa}
+</style>
+</head>
+<body>
+<div class="space" id="space"><div class="nebula n1"></div><div class="nebula n2"></div></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     初始内容（种子数据）——「文件轨道」：写在这里的档案 = 对外公开的底稿
+     ▸ 页面上的编辑保存在当前浏览器，不会写回本文件
+     ▸ 想让修改对外公开：写进这里 → 部署后上传 → 全网可见
+     ▸ 文件内容更新后，在页面上点「↺ 恢复文件初始内容」载入新版
+     ══════════════════════════════════════════════════════════ -->
+<script>
+const PROFILE_SEED = {
+  avatar: "🌟",
+  name: "黄赛",
+  sid: "202410811402",
+  cls: "工商管理4班",
+  major: "工商管理",
+  motto: "未来即是现在",
+  skills: ["数据分析", "PPT 熟练工", "靠谱执行者", "好奇心过剩"],
+  goals: [
+    "持续迭代「热带屿」个人网站",
+    "系统学习数据分析工具",
+    "坚持打卡，养成记录习惯"
+  ],
+  intro: "你好，欢迎登岛！我是一名商科学生，相信「未来即是现在」——与其等待未来，不如现在就开始。"
+};
+</script>
+<!-- ══════════════ 种子数据结束，以下内容不用动 ══════════════ -->
+
+<nav class="nav">
+  <span class="logo">🏝 热带屿</span>
+  <a href="index.html">首页</a>
+  <a class="active" href="about.html">关于我</a>
+  <a href="works.html">作品集</a>
+  <a href="ideas.html">灵感墙</a>
+  <a href="tools.html">学习舱</a>
+  <a href="growth.html">成长足迹</a>
+</nav>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>🧑‍🚀 舰员档案</h1>
+    <p>CREW PROFILE · 来自地球的实习宇航员</p>
+  </div>
+
+  <div class="profile">
+    <div class="ops">
+      <button class="op" id="editBtn" title="编辑档案">✎</button>
+      <button class="op danger" id="resetBtn" title="丢弃本机编辑，恢复文件初始内容">↺</button>
+    </div>
+    <div class="avatar" id="pAvatar">🌟</div>
+    <div class="pname"><span id="pName">—</span><span class="badge">✔ 已认证舰员</span></div>
+    <div class="meta">
+      <span>学号 <b id="pSid">—</b></span>
+      <span>班级 <b id="pCls">—</b></span>
+      <span>专业 <b id="pMajor">—</b></span>
+    </div>
+    <p class="motto" id="pMotto"></p>
+
+    <div class="sect">
+      <h3>✦ 技能标签</h3>
+      <div class="skillbox" id="pSkills"></div>
+    </div>
+
+    <div class="sect">
+      <h3>🎯 本学期成长目标</h3>
+      <ul class="goals" id="pGoals"></ul>
+    </div>
+
+    <div class="sect">
+      <h3>📝 舰长日志 · 自我介绍</h3>
+      <p class="intro" id="pIntro"></p>
+    </div>
+
+    <div class="crewid">ISLE CREW ID · REDAIYUHAIFENG-2026</div>
+  </div>
+
+  <div class="toolbar2">
+    <button class="chip2 addbtn" id="editBtn2">✎ 编辑档案</button>
+    <button class="chip2 resetbtn" id="resetBtn2">↺ 恢复文件初始内容</button>
+  </div>
+
+  <p class="tip">💡 档案编辑保存在当前浏览器，下次打开仍在 · 「↺」= 丢弃本机编辑、重新读取文件里的种子数据<br>📱 想让修改对外公开：写进文件顶部种子数据 → 部署后上传 → 全网可见 · 数据迁移用「学习舱 → 数据备份」</p>
+</main>
+
+<div class="modal" id="editModal">
+  <div class="mbox">
+    <div class="mhead"><h3>✏️ 编辑舰员档案</h3><button class="xbtn" id="emClose">✕</button></div>
+    <label>头像 emoji</label>
+    <input class="minput" id="efAvatar" maxlength="4" placeholder="如 🌟 🚀 🌙">
+    <label>姓名 *</label>
+    <input class="minput" id="efName" maxlength="20">
+    <label>学号</label>
+    <input class="minput" id="efSid" maxlength="20">
+    <label>班级</label>
+    <input class="minput" id="efCls" maxlength="20">
+    <label>专业</label>
+    <input class="minput" id="efMajor" maxlength="20">
+    <label>座右铭</label>
+    <input class="minput" id="efMotto" maxlength="60">
+    <label>技能标签（逗号或空格分隔）</label>
+    <input class="minput" id="efSkills" placeholder="如：数据分析, PPT 熟练工">
+    <label>成长目标（每行一条）</label>
+    <textarea class="minput" id="efGoals" placeholder="一行写一个目标"></textarea>
+    <label>自我介绍</label>
+    <textarea class="minput" id="efIntro" placeholder="向登岛的人介绍你自己…"></textarea>
+    <p class="mnote"> Crew ID 保持不变，作为本站唯一标识。</p>
+    <div class="ebtns">
+      <button class="btn2 exp" id="emSave">✔️ 保存</button>
+      <button class="btn2 ghost" id="emCancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<footer>✦ 热带屿 · <a href="index.html">返回首页</a></footer>
+
+<script>
+/* ================= 数据层：页面编辑 + 浏览器保存 ================= */
+const STORE_KEY='isle_profile_v1';
+let PROFILE=(function(){
+  try{const v=JSON.parse(localStorage.getItem(STORE_KEY));if(v&&typeof v==='object')return v;}catch(e){}
+  const seed=JSON.parse(JSON.stringify(PROFILE_SEED));
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(seed));}catch(e){}
+  return seed;
+})();
+function persist(){try{localStorage.setItem(STORE_KEY,JSON.stringify(PROFILE));}catch(e){}}
+
+const $=i=>document.getElementById(i);
+const esc=s=>String(s??'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+function parseTags(s){return [...new Set(s.split(/[,，、;；\s]+/).map(t=>t.trim()).filter(Boolean))].slice(0,8);}
+function parseLines(s){return s.split(/\n+/).map(t=>t.trim()).filter(Boolean).slice(0,8);}
+
+function render(){
+  $('pAvatar').textContent=PROFILE.avatar||'🌟';
+  $('pName').textContent=PROFILE.name||'—';
+  $('pSid').textContent=PROFILE.sid||'—';
+  $('pCls').textContent=PROFILE.cls||'—';
+  $('pMajor').textContent=PROFILE.major||'—';
+  $('pMotto').textContent=PROFILE.motto?('“ '+PROFILE.motto+' ”'):'';
+  const sk=PROFILE.skills||[];
+  $('pSkills').innerHTML=sk.length?sk.map(s=>`<span class="skill">${esc(s)}</span>`).join(''):`<span class="mnote">还没有技能标签——点右上角 ✎ 添加</span>`;
+  const gl=PROFILE.goals||[];
+  $('pGoals').innerHTML=gl.length?gl.map(g=>`<li>${esc(g)}</li>`).join(''):`<span class="mnote">还没有成长目标——点右上角 ✎ 添加</span>`;
+  $('pIntro').textContent=PROFILE.intro||'';
+}
+
+/* ================= 编辑弹窗 ================= */
+function openModal(){$('editModal').classList.add('open');}
+function closeModal(){$('editModal').classList.remove('open');}
+function openEdit(){
+  $('efAvatar').value=PROFILE.avatar||'';$('efName').value=PROFILE.name||'';
+  $('efSid').value=PROFILE.sid||'';$('efCls').value=PROFILE.cls||'';$('efMajor').value=PROFILE.major||'';
+  $('efMotto').value=PROFILE.motto||'';$('efSkills').value=(PROFILE.skills||[]).join(', ');
+  $('efGoals').value=(PROFILE.goals||[]).join('\n');$('efIntro').value=PROFILE.intro||'';
+  openModal();setTimeout(()=>$('efName').focus(),60);
+}
+$('emSave').onclick=()=>{
+  if(!$('efName').value.trim()){toast('姓名还没写哦');return;}
+  PROFILE={
+    avatar:$('efAvatar').value.trim()||'🌟',
+    name:$('efName').value.trim(),
+    sid:$('efSid').value.trim(),cls:$('efCls').value.trim(),major:$('efMajor').value.trim(),
+    motto:$('efMotto').value.trim(),
+    skills:parseTags($('efSkills').value),
+    goals:parseLines($('efGoals').value),
+    intro:$('efIntro').value.trim()
+  };
+  persist();closeModal();render();toast('✅ 档案已更新');
+};
+$('emCancel').onclick=closeModal;
+$('emClose').onclick=closeModal;
+$('editModal').onclick=e=>{if(e.target===$('editModal'))closeModal();};
+$('editBtn').onclick=openEdit;
+$('editBtn2').onclick=openEdit;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+function resetAll(){
+  if(confirm('将丢弃本页在浏览器中的档案编辑，恢复为文件里写死的初始内容（种子数据）。\n\n若本机编辑里有想保留的内容，请先导出备份！\n\n确定恢复吗？')){
+    try{localStorage.removeItem(STORE_KEY);}catch(e){}
+    location.reload();
+  }
+}
+$('resetBtn').onclick=resetAll;
+$('resetBtn2').onclick=resetAll;
+
+/* ================= 轻提示 ================= */
+let toastTimer;
+function toast(msg){
+  const t=$('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+const sp=document.getElementById('space');
+for(let i=0;i<110;i++){const s=document.createElement('div');s.className='star';
+const z=Math.random()*1.8+.6;s.style.width=s.style.height=z+'px';
+s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';
+s.style.setProperty('--d',(Math.random()*4+2)+'s');s.style.animationDelay=Math.random()*5+'s';
+sp.appendChild(s);}
+render();
+</script>
+</body>
+</html>

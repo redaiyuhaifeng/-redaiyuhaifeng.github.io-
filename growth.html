@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>航行日志 · 热带屿</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#07071a;color:#e8eaff;min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.space{position:fixed;inset:0;z-index:0;overflow:hidden;background:radial-gradient(ellipse at 20% 10%,rgba(76,44,166,.38),transparent 55%),radial-gradient(ellipse at 85% 80%,rgba(23,90,168,.32),transparent 55%),linear-gradient(180deg,#07071a,#0d0b26 55%,#140b30)}
+.star{position:absolute;background:#fff;border-radius:50%;animation:tw var(--d,3s) ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
+.nebula{position:absolute;border-radius:50%;filter:blur(90px)}
+.n1{width:460px;height:460px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%)}
+.n2{width:420px;height:420px;bottom:-100px;right:-90px;background:radial-gradient(circle,rgba(56,189,248,.35),transparent 70%)}
+.nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:2px;max-width:94vw;padding:8px 12px;border-radius:999px;background:rgba(18,18,48,.55);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px)}
+.logo{font-weight:800;font-size:1rem;padding:0 12px 0 6px;background:linear-gradient(120deg,#c4b5fd,#8ab6ff,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav a{font-size:.86rem;color:#c6c9f0;padding:7px 13px;border-radius:999px;transition:.25s}
+.nav a:hover,.nav a.active{color:#fff;background:rgba(139,92,246,.28)}
+.wrap{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:110px 20px 50px}
+.page-head{text-align:center;margin-bottom:26px}
+.page-head h1{font-size:clamp(1.8rem,5vw,2.4rem);background:linear-gradient(120deg,#c4b5fd,#8ab6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.page-head p{color:#9aa0c3;font-size:.88rem;margin-top:8px;letter-spacing:.15em}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:24px}
+.stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;text-align:center;backdrop-filter:blur(10px);transition:.3s}
+.stat:hover{transform:translateY(-4px);border-color:rgba(167,139,250,.4)}
+.stat .v{font-size:2rem;font-weight:800;background:linear-gradient(120deg,#c4b5fd,#8ab6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat .l{font-size:.78rem;color:#8a8fb8;margin-top:4px;letter-spacing:.12em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-bottom:10px}
+.chip2{font-size:.8rem;color:#c6c9f0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);padding:7px 15px;border-radius:999px;cursor:pointer;transition:.25s;font-family:inherit}
+.chip2.on{background:rgba(139,92,246,.3);border-color:rgba(167,139,250,.6);color:#fff}
+.addbtn{background:linear-gradient(120deg,#7c5cff,#4f7dff)!important;border:none!important;color:#fff!important;box-shadow:0 4px 14px rgba(99,91,255,.4)}
+.addbtn:hover{transform:translateY(-2px)}
+.resetbtn{color:#8a8fb8!important;font-size:.72rem!important}
+.resetbtn:hover{color:#fca5a5!important;border-color:rgba(248,113,113,.45)!important}
+.lane-h{display:flex;align-items:baseline;gap:10px;margin:30px 0 8px;font-size:1.05rem;font-weight:700;color:#c4b5fd;letter-spacing:.05em}
+.lane-h small{font-weight:400;font-size:.72rem;color:#8a8fb8}
+.timeline{position:relative;padding:14px 0 4px}
+.tl-line{position:absolute;left:50%;top:0;bottom:0;width:2px;transform:translateX(-50%);background:linear-gradient(180deg,rgba(167,139,250,0),rgba(167,139,250,.55) 7%,rgba(79,195,255,.45) 62%,rgba(167,139,250,0));box-shadow:0 0 14px rgba(139,92,246,.4)}
+.tl-item{position:relative;width:50%;padding:0 48px 44px 0;animation:fadeup .6s ease both}
+.tl-item.right{margin-left:50%;padding:0 0 44px 48px}
+@keyframes fadeup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.tl-dot{position:absolute;top:0;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:#141233;border:2px solid var(--bd);box-shadow:0 0 18px var(--gl)}
+.tl-item:not(.right) .tl-dot{right:-22px}
+.tl-item.right .tl-dot{left:-22px}
+.tl-item::before{content:"";position:absolute;top:21px;right:22px;width:26px;height:2px;background:var(--bd)}
+.tl-item.right::before{right:auto;left:22px}
+.tcard{position:relative;background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:18px;padding:20px 22px;backdrop-filter:blur(10px);transition:.3s}
+.tcard:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 14px 34px var(--gl)}
+.ops{position:absolute;top:12px;right:12px;display:flex;gap:6px;opacity:0;transition:.25s;z-index:3}
+.tcard:hover .ops,.fcard:hover .ops{opacity:1}
+@media(hover:none){.ops{opacity:.75}}
+.op{width:28px;height:28px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(20,18,50,.72);color:#c6c9f0;cursor:pointer;font-size:.78rem;transition:.2s;font-family:inherit;backdrop-filter:blur(4px)}
+.op:hover{border-color:#a78bfa;color:#fff}
+.op.danger:hover{border-color:rgba(248,113,113,.6);color:#fca5a5}
+.tdate{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;color:#9aa0c3;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);padding:5px 12px;border-radius:999px;margin-bottom:12px}
+.tago{color:var(--c);font-size:.72rem}
+.tcard h3{font-size:1.08rem;margin-bottom:8px;line-height:1.6}
+.tdesc{font-size:.88rem;color:#9aa0c3;line-height:1.95}
+.ttype{font-size:.7rem;padding:4px 12px;border-radius:999px;background:var(--bg);border:1px solid var(--bd);color:var(--c);display:inline-block;margin-top:12px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;padding:10px 0 4px}
+.fcard{position:relative;border:1.5px dashed rgba(167,139,250,.4);border-radius:18px;padding:20px;background:rgba(139,92,246,.05);transition:.3s;animation:fadeup .6s ease both}
+.fcard:hover{border-color:rgba(167,139,250,.8);background:rgba(139,92,246,.1);transform:translateY(-3px)}
+.cd{display:inline-block;font-size:.72rem;color:var(--c);background:var(--bg);border:1px solid var(--bd);padding:4px 12px;border-radius:999px;margin-bottom:12px}
+.fcard h3{font-size:1rem;margin-bottom:8px;line-height:1.6}
+.empty{text-align:center;color:#8a8fb8;padding:50px 20px;border:1px dashed rgba(255,255,255,.12);border-radius:16px}
+.tip{text-align:center;color:#8a8fb8;font-size:.8rem;margin-top:28px;line-height:2}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(5,5,20,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.mbox{width:min(460px,100%);background:#12102e;border:1px solid rgba(167,139,250,.35);border-radius:20px;padding:22px;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.mhead h3{font-size:1.05rem;background:linear-gradient(120deg,#c4b5fd,#8ab6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.xbtn{width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;font-family:inherit}
+.mbox label{display:block;font-size:.8rem;color:#9aa0c3;margin:13px 0 6px}
+.minput{width:100%;background:rgba(10,10,30,.6);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 12px;color:#fff;font-size:.9rem;font-family:inherit}
+.minput:focus{outline:none;border-color:#a78bfa;box-shadow:0 0 10px rgba(139,92,246,.35)}
+select.minput option{color:#111}
+textarea.minput{resize:vertical;min-height:100px;line-height:1.8}
+.ebtns{display:flex;gap:12px;margin-top:20px}
+.btn2{padding:12px 26px;border-radius:999px;border:none;cursor:pointer;font-size:.9rem;transition:.3s;font-family:inherit}
+.btn2.exp{background:linear-gradient(120deg,#7c5cff,#4f7dff);color:#fff;box-shadow:0 6px 18px rgba(99,91,255,.4)}
+.btn2.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);color:#c6c9f0}
+.btn2:hover{transform:translateY(-2px)}
+#toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(20px);background:rgba(30,26,66,.92);border:1px solid rgba(167,139,250,.5);color:#fff;padding:12px 26px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:.35s;z-index:200;box-shadow:0 8px 30px rgba(0,0,0,.5);backdrop-filter:blur(8px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{position:relative;z-index:2;text-align:center;padding:36px 20px 30px;color:#5b5f8f;font-size:.8rem}
+footer a{color:#a78bfa}
+@media(max-width:680px){
+  .tl-line{left:22px;transform:none}
+  .tl-item,.tl-item.right{width:100%;margin-left:0;padding:0 0 38px 62px}
+  .tl-item:not(.right) .tl-dot,.tl-item.right .tl-dot{left:0;right:auto}
+  .tl-item::before,.tl-item.right::before{left:44px;right:auto;width:18px}
+}
+</style>
+</head>
+<body>
+<div class="space" id="space"><div class="nebula n1"></div><div class="nebula n2"></div></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     初始内容（种子数据）——「文件轨道」：写在这里的内容 = 对外公开的底稿
+     ▸ 日期格式必须是 "YYYY-MM-DD"（自动排序/航程/倒计时都依赖它）
+     ▸ type 类型：里程碑 / 荣誉 / 创作 / 旅行 / 学习 / 其他（决定图标颜色）
+     ▸ 未来日期自动进入「未来航道」显示倒计时，到期自动写入历史
+     ══════════════════════════════════════════════════════════ -->
+<script>
+const MILESTONES_SEED = [
+  { date: "2026-10-12", type: "里程碑", title: "制作了个人网页「热带屿」", desc: "从零开始、全程 AI 辅助搭建：一座漂浮在星海中的私人小岛。这里将存放我的作品、灵感与每一天的努力——未来即是现在，今天就是起点。" },
+  { date: "2026-09-05", type: "荣誉", title: "获得比赛特等奖", desc: "点卡片右上角 ✎ 补充：比赛名称、参赛作品、获奖感受。" },
+  { date: "2026-08-05", type: "旅行", title: "解锁旅行日记之杭州", desc: "点卡片右上角 ✎ 补充：旅途见闻与感受。" }
+];
+</script>
+<!-- ══════════════ 种子数据结束，以下内容不用动 ══════════════ -->
+
+<nav class="nav">
+  <span class="logo">🏝 热带屿</span>
+  <a href="index.html">首页</a>
+  <a href="about.html">关于我</a>
+  <a href="works.html">作品集</a>
+  <a href="ideas.html">灵感墙</a>
+  <a href="tools.html">学习舱</a>
+  <a class="active" href="growth.html">成长足迹</a>
+</nav>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>🚀 航行日志</h1>
+    <p>GROWTH VOYAGE · 每一个脚印，都是星图上的坐标</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="v" id="st-count">0</div><div class="l">累计里程碑</div></div>
+    <div class="stat"><div class="v" id="st-days">0</div><div class="l">航程已持续（天）</div></div>
+    <div class="stat"><div class="v" id="st-future">0</div><div class="l">🔮 未来航点</div></div>
+  </div>
+
+  <div class="chips" id="chips"></div>
+  <div class="chips"><button class="chip2 addbtn" id="addBtn">＋ 添加里程碑</button></div>
+
+  <div class="lane-h">⭐ 历史航道 <small>按时间自动排序 · 从最近到现在</small></div>
+  <div class="timeline" id="timeline"><div class="tl-line"></div><div id="tlItems" style="position:relative"></div></div>
+  <div class="empty" id="pastEmpty" style="display:none">🌊 历史航道还没有航迹</div>
+
+  <div id="futureZone">
+    <div class="lane-h">🔮 未来航道 <small>倒计时归零之日，自动写入历史</small></div>
+    <div class="fgrid" id="fgrid"></div>
+    <div class="empty" id="futureEmpty" style="display:none">🗺️ 暂无预定航点——点「＋ 添加里程碑」选一个未来日期试试</div>
+  </div>
+
+  <p class="tip">💡 页面编辑保存在当前浏览器，下次打开仍在 · 「↺ 恢复文件初始内容」= 丢弃本机编辑、重新读取文件里的种子数据<br>📱 手机与电脑的浏览器各自独立保存；整体迁移用「学习舱 → 数据备份」导出/导入</p>
+</main>
+
+<div class="modal" id="editModal">
+  <div class="mbox">
+    <div class="mhead"><h3 id="emTitle">✏️ 里程碑</h3><button class="xbtn" id="emClose">✕</button></div>
+    <label>日期 *</label>
+    <input class="minput" id="efDate" type="date">
+    <label>类型</label>
+    <select class="minput" id="efType">
+      <option>里程碑</option><option>荣誉</option><option>创作</option>
+      <option>旅行</option><option>学习</option><option>其他</option>
+    </select>
+    <label>标题 *</label>
+    <input class="minput" id="efTitle" maxlength="60" placeholder="如：获得比赛特等奖">
+    <label>描述（选填 · 写下感受与细节）</label>
+    <textarea class="minput" id="efDesc"></textarea>
+    <div class="ebtns">
+      <button class="btn2 exp" id="emSave">✔️ 保存</button>
+      <button class="btn2 ghost" id="emCancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<footer>✦ 热带屿 · <a href="index.html">返回首页</a></footer>
+
+<script>
+/* ================= 数据层：页面编辑 + 浏览器保存 ================= */
+const STORE_KEY='isle_milestones_v1';
+let MILESTONES=(function(){
+  try{const v=JSON.parse(localStorage.getItem(STORE_KEY));if(Array.isArray(v))return v;}catch(e){}
+  const seed=JSON.parse(JSON.stringify(MILESTONES_SEED));
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(seed));}catch(e){}
+  return seed;
+})();
+function persist(){try{localStorage.setItem(STORE_KEY,JSON.stringify(MILESTONES));}catch(e){}}
+
+const TYPES={
+ '荣誉':{ico:'🏆',c:'#ffd166',bg:'rgba(255,209,102,.12)',bd:'rgba(255,209,102,.42)',gl:'rgba(255,209,102,.22)'},
+ '创作':{ico:'💻',c:'#a78bfa',bg:'rgba(167,139,250,.14)',bd:'rgba(167,139,250,.45)',gl:'rgba(139,92,246,.25)'},
+ '旅行':{ico:'✈️',c:'#4fc3ff',bg:'rgba(79,195,255,.12)',bd:'rgba(79,195,255,.42)',gl:'rgba(79,195,255,.22)'},
+ '学习':{ico:'📚',c:'#f0abfc',bg:'rgba(240,171,252,.12)',bd:'rgba(240,171,252,.42)',gl:'rgba(240,171,252,.2)'},
+ '里程碑':{ico:'🚀',c:'#34d399',bg:'rgba(52,211,153,.12)',bd:'rgba(52,211,153,.42)',gl:'rgba(52,211,153,.2)'},
+ '其他':{ico:'✨',c:'#c4b5fd',bg:'rgba(196,181,253,.12)',bd:'rgba(196,181,253,.4)',gl:'rgba(196,181,253,.2)'}
+};
+let filter='全部';
+const $=i=>document.getElementById(i);
+const esc=s=>String(s??'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+const parseD=s=>{const p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);};
+const fmtD=s=>{const p=s.split('-').map(Number);return p[0]+'.'+String(p[1]).padStart(2,'0')+'.'+String(p[2]).padStart(2,'0');};
+const today0=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());};
+const T=m=>TYPES[m.type]||TYPES['其他'];
+
+function render(){
+  const today=today0();
+  const past=MILESTONES.filter(m=>parseD(m.date)<=today).sort((a,b)=>b.date.localeCompare(a.date));
+  const future=MILESTONES.filter(m=>parseD(m.date)>today).sort((a,b)=>a.date.localeCompare(b.date));
+  const inF=m=>filter==='全部'||m.type===filter;
+
+  $('st-count').textContent=past.length;
+  $('st-future').textContent=future.length;
+  if(past.length){
+    const earliest=past[past.length-1];
+    $('st-days').textContent=Math.max(1,Math.round((today-parseD(earliest.date))/864e5));
+  }else $('st-days').textContent=0;
+
+  const cnt={};
+  MILESTONES.forEach(m=>cnt[m.type]=(cnt[m.type]||0)+1);
+  $('chips').innerHTML=`<button class="chip2${filter==='全部'?' on':''}" data-t="全部">全部 ${MILESTONES.length}</button>`
+    +Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).map(t=>`<button class="chip2${t===filter?' on':''}" data-t="${esc(t)}">${T({type:t}).ico} ${esc(t)} ${cnt[t]}</button>`).join('')
+    +`<button class="chip2 resetbtn" id="resetBtn" title="丢弃本机编辑，重新读取文件里的初始内容">↺ 恢复文件初始内容</button>`;
+  document.querySelectorAll('.chip2[data-t]').forEach(b=>b.onclick=()=>{filter=b.dataset.t;render();});
+  $('resetBtn').onclick=()=>{
+    if(confirm('将丢弃本页在浏览器中的全部编辑，恢复为文件里写死的初始内容（种子数据）。\n\n若本机编辑里有想保留的里程碑，请先导出备份！\n\n确定恢复吗？')){
+      try{localStorage.removeItem(STORE_KEY);}catch(e){}
+      location.reload();
+    }
+  };
+
+  const plist=past.filter(inF);
+  $('pastEmpty').style.display=plist.length?'none':'block';
+  $('tlItems').innerHTML=plist.map((m,i)=>{
+    const t=T(m),gi=MILESTONES.indexOf(m);
+    const days=Math.round((today-parseD(m.date))/864e5);
+    const ago=days===0?'✦ 今天':days===1?'✦ 昨天':'✦ 已航行 '+days+' 天';
+    return `<div class="tl-item${i%2?' right':''}" style="--c:${t.c};--bg:${t.bg};--bd:${t.bd};--gl:${t.gl};animation-delay:${Math.min(i*90,540)}ms">
+      <div class="tl-dot">${t.ico}</div>
+      <div class="tcard">
+        <div class="ops">
+          <button class="op" data-edit="${gi}" title="编辑">✎</button>
+          <button class="op danger" data-del="${gi}" title="删除">🗑</button>
+        </div>
+        <span class="tdate">📅 ${fmtD(m.date)} <span class="tago">${ago}</span></span>
+        <h3>${esc(m.title)}</h3>
+        ${m.desc?`<p class="tdesc">${esc(m.desc).replace(/\n/g,'<br>')}</p>`:''}
+        <span class="ttype">${t.ico} ${esc(m.type)}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  const flist=future.filter(inF);
+  $('futureZone').style.display=future.length||flist.length?'block':'none';
+  $('futureEmpty').style.display=flist.length?'none':'block';
+  $('fgrid').innerHTML=flist.map((m,i)=>{
+    const t=T(m),gi=MILESTONES.indexOf(m);
+    const days=Math.ceil((parseD(m.date)-today)/864e5);
+    return `<div class="fcard" style="--c:${t.c};--bg:${t.bg};--bd:${t.bd}">
+      <div class="ops">
+        <button class="op" data-edit="${gi}" title="编辑">✎</button>
+        <button class="op danger" data-del="${gi}" title="删除">🗑</button>
+      </div>
+      <span class="cd">⏳ 倒计时 ${days} 天</span>
+      <h3>${t.ico} ${esc(m.title)}</h3>
+      ${m.desc?`<p class="tdesc">${esc(m.desc).replace(/\n/g,'<br>')}</p>`:''}
+      <span class="ttype" style="--c:${t.c};--bg:${t.bg};--bd:${t.bd}">📅 ${fmtD(m.date)} · ${esc(m.type)}</span>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openEdit(Number(b.dataset.edit)));
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delMile(Number(b.dataset.del)));
+}
+
+/* ================= 编辑弹窗 ================= */
+let editIdx=-1;
+function openModal(){$('editModal').classList.add('open');}
+function closeModal(){$('editModal').classList.remove('open');editIdx=-1;}
+function openAdd(){
+  editIdx=-1;
+  $('emTitle').textContent='✏️ 新增里程碑';
+  $('efDate').value='';$('efType').value='里程碑';$('efTitle').value='';$('efDesc').value='';
+  openModal();setTimeout(()=>$('efDate').focus(),60);
+}
+function openEdit(i){
+  const m=MILESTONES[i];if(!m)return;editIdx=i;
+  $('emTitle').textContent='✏️ 编辑里程碑';
+  $('efDate').value=m.date;$('efType').value=m.type;
+  $('efTitle').value=m.title;$('efDesc').value=m.desc||'';
+  openModal();
+}
+$('emSave').onclick=()=>{
+  const date=$('efDate').value,title=$('efTitle').value.trim();
+  if(!date){toast('请先选择日期');return;}
+  if(!title){toast('标题还没写哦');return;}
+  const item={date,type:$('efType').value,title,desc:$('efDesc').value.trim()};
+  if(editIdx<0){MILESTONES.push(item);toast('🚀 新航点已写入星图');}
+  else{MILESTONES[editIdx]=item;toast('✅ 已保存修改');}
+  persist();closeModal();render();
+};
+$('emCancel').onclick=closeModal;
+$('emClose').onclick=closeModal;
+$('editModal').onclick=e=>{if(e.target===$('editModal'))closeModal();};
+$('addBtn').onclick=openAdd;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+function delMile(i){
+  const m=MILESTONES[i];if(!m)return;
+  if(confirm('删除里程碑「'+m.title+'」？')){
+    MILESTONES.splice(i,1);persist();render();toast('🗑️ 已删除');
+  }
+}
+
+/* ================= 轻提示 ================= */
+let toastTimer;
+function toast(msg){
+  const t=$('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+const sp=document.getElementById('space');
+for(let i=0;i<110;i++){const s=document.createElement('div');s.className='star';
+const z=Math.random()*1.8+.6;s.style.width=s.style.height=z+'px';
+s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';
+s.style.setProperty('--d',(Math.random()*4+2)+'s');s.style.animationDelay=Math.random()*5+'s';
+sp.appendChild(s);}
+render();
+</script>
+</body>
+</html>
