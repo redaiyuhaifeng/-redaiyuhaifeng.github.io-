@@ -21,8 +21,8 @@ const WORKS_SEED = [
   {
     "title": "学习通",
     "cat": "网站",
-    "desc": "链接暂时留空也没关系，会显示「链接待补充」，之后随时补上。",
-    "link": "",
+    "desc": "学业网站",
+    "link": "https://passport2.chaoxing.com/login?fid=&newversion=true&refer=https%3A%2F%2Fi.chaoxing.com",
     "tags": [
       "课程作业"
     ],
