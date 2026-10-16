@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内容控制台 · 热带屿</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏝️</text></svg>">
+<style>
+  /* ========== 基础（风格与主站统一） ========== */
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#07071a;color:#e8eaff;min-height:100vh;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+
+  /* ========== 星空背景 ========== */
+  .space{position:fixed;inset:0;z-index:0;overflow:hidden;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(76,44,166,.38), transparent 55%),
+      radial-gradient(ellipse at 85% 80%, rgba(23,90,168,.32), transparent 55%),
+      linear-gradient(180deg,#07071a 0%, #0d0b26 55%, #140b30 100%);
+  }
+  .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite}
+  .star.big{box-shadow:0 0 8px 2px rgba(255,255,255,.45)}
+  @keyframes twinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:1;transform:scale(1.2)}}
+  .nebula{position:absolute;border-radius:50%;filter:blur(90px)}
+  .n1{width:520px;height:520px;top:-140px;left:-140px;background:radial-gradient(circle, rgba(139,92,246,.5), transparent 70%);animation:drift 18s ease-in-out infinite alternate}
+  .n2{width:480px;height:480px;bottom:-120px;right:-100px;background:radial-gradient(circle, rgba(56,189,248,.4), transparent 70%);animation:drift 24s ease-in-out infinite alternate-reverse}
+  @keyframes drift{from{transform:translate(0,0)}to{transform:translate(30px,40px)}}
+
+  /* ========== 布局 ========== */
+  .wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:32px 20px 60px}
+  .page-head{text-align:center;margin-bottom:26px}
+  .page-head h1{font-size:30px;letter-spacing:2px;
+    background:linear-gradient(90deg,#c4b5fd,#8ab6ff,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .page-head p{color:#a5b4fc;font-size:13px;letter-spacing:1px;margin-top:6px}
+  .card2{background:rgba(255,255,255,.045);border:1px solid rgba(167,139,250,.22);border-radius:16px;padding:18px;margin-bottom:18px}
+
+  /* ========== 令牌门 ========== */
+  .gate{position:relative;z-index:1;max-width:520px;margin:8vh auto 0;padding:28px;
+    background:rgba(255,255,255,.05);border:1px solid rgba(167,139,250,.28);border-radius:20px}
+  .gate h1{font-size:24px;text-align:center;
+    background:linear-gradient(90deg,#c4b5fd,#8ab6ff,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .gate .sub{text-align:center;color:#a5b4fc;font-size:12px;margin:8px 0 18px}
+  .gate label{display:block;font-size:12px;color:#c4b5fd;margin:12px 0 6px}
+
+  /* ========== 表单控件 ========== */
+  .minput{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(167,139,250,.3);
+    background:rgba(15,15,40,.75);color:#e8eaff;font-size:14px;font-family:inherit;outline:none}
+  .minput:focus{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,.18)}
+  textarea.minput{min-height:80px;resize:vertical;line-height:1.6}
+  label{display:block;font-size:12px;color:#c4b5fd;margin:12px 0 6px}
+
+  .btn2{padding:10px 18px;border-radius:12px;border:1px solid transparent;font-size:14px;cursor:pointer;
+    transition:transform .15s,filter .15s;font-family:inherit}
+  .btn2:hover{transform:translateY(-1px);filter:brightness(1.12)}
+  .btn2.exp{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff}
+  .btn2.ghost{background:rgba(255,255,255,.06);border-color:rgba(167,139,250,.35);color:#e8eaff}
+  .chip2{display:inline-block;padding:8px 14px;border-radius:999px;font-size:13px;cursor:pointer;
+    background:rgba(255,255,255,.06);border:1px solid rgba(167,139,250,.3);color:#e8eaff}
+  .chip2.on{background:linear-gradient(135deg,#7c3aed,#2563eb);border-color:transparent;color:#fff}
+  .addbtn{border-color:rgba(56,189,248,.5)}
+  .resetbtn{border-color:rgba(248,113,113,.5)}
+  .tip{color:#94a3b8;font-size:12px;line-height:1.7;margin-top:10px}
+
+  /* ========== 文件选择 ========== */
+  .files{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px}
+
+  /* ========== 条目卡片 ========== */
+  .acard{background:rgba(255,255,255,.03);border:1px solid rgba(167,139,250,.18);border-radius:14px;padding:16px;margin-bottom:14px}
+  .chead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .chead h3{font-size:15px;color:#c4b5fd;font-weight:600}
+  .ops{display:flex;gap:6px}
+  .op{width:28px;height:28px;line-height:1;border-radius:8px;cursor:pointer;
+    background:rgba(255,255,255,.07);border:1px solid rgba(167,139,250,.28);color:#e8eaff}
+  .op:hover{background:rgba(167,139,250,.25)}
+  .op.danger{color:#fca5a5}
+
+  .toolbar2{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:18px}
+  .taghint{font-size:11px;color:#7c8ab5;margin-top:-2px}
+
+  /* ========== 提示条 ========== */
+  .msg{margin:14px 0;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.7;display:none}
+  .msg.ok{display:block;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);color:#bbf7d0}
+  .msg.err{display:block;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.35);color:#fecaca}
+  .msg.info{display:block;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:#bae6fd}
+
+  footer{position:relative;z-index:1;text-align:center;color:#7c8ab5;font-size:12px;padding:0 20px 40px}
+</style>
+</head>
+<body>
+<div class="space" id="space"><div class="nebula n1"></div><div class="nebula n2"></div></div>
+
+<!-- ══════ 第一步：令牌门 ══════ -->
+<section class="gate" id="gate">
+  <h1>🛠️ 内容控制台</h1>
+  <p class="sub">ADMIN CONSOLE · 编辑 data/ 下的种子数据</p>
+
+  <label for="tokenInput">GitHub Fine-grained Token（仅 Contents: Read and write）</label>
+  <input class="minput" id="tokenInput" type="password" placeholder="github_pat_…" autocomplete="off">
+  <p class="taghint">创建位置：GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens</p>
+
+  <div class="toolbar2">
+    <button class="btn2 exp" id="startBtn">开始使用 →</button>
+  </div>
+  <p class="tip">🔒 令牌只保存在当前标签页的 sessionStorage，不会写入代码、不会存进 localStorage、不会上传或提交；关闭标签页即自动清除。</p>
+  <div class="msg err" id="gateMsg"></div>
+</section>
+
+<!-- ══════ 第二步：控制台 ══════ -->
+<main class="wrap" id="console" style="display:none">
+  <div class="page-head">
+    <h1>🛠️ 内容控制台</h1>
+    <p>ADMIN CONSOLE · 选择文件 → 读取 → 编辑 → 保存</p>
+  </div>
+
+  <div class="files" id="files"></div>
+  <div class="msg" id="msg"></div>
+
+  <div class="card2" id="formCard" style="display:none">
+    <form id="form"></form>
+    <div class="toolbar2">
+      <button class="btn2 exp" id="saveBtn">💾 保存到 GitHub</button>
+      <button class="btn2 ghost" id="reloadBtn">↺ 重新读取</button>
+      <button class="chip2 resetbtn" id="logoutBtn">✕ 清除令牌</button>
+    </div>
+    <p class="tip">💡 保存 = 直接向仓库推送一次提交；保存成功后 GitHub Pages 需要 1~2 分钟重新构建才会全网生效。</p>
+  </div>
+</main>
+
+<footer>✦ 热带屿 · <a href="index.html">返回首页</a></footer>
+
+<script>
+/* ================= 仓库配置 ================= */
+const OWNER = 'redaiyuhaifeng';
+const REPO  = 'redaiyuhaifeng.github.io';
+const DIR   = 'data';
+const API   = 'https://api.github.com';
+
+/* ================= 四个文件的字段结构（参考各页 ✎ 弹窗） ================= */
+const SCHEMA = {
+  'about.js': {
+    varName: 'PROFILE_SEED',
+    shape: 'object',
+    label: '关于我 · 舰员档案',
+    itemName: '档案',
+    fields: [
+      { key: 'avatar', label: '头像 emoji', type: 'text' },
+      { key: 'name',   label: '姓名 *',    type: 'text', required: true },
+      { key: 'sid',    label: '学号',      type: 'text' },
+      { key: 'cls',    label: '班级',      type: 'text' },
+      { key: 'major',  label: '专业',      type: 'text' },
+      { key: 'motto',  label: '座右铭',    type: 'text' },
+      { key: 'skills', label: '技能标签（逗号或空格分隔）', type: 'tags' },
+      { key: 'goals',  label: '成长目标（每行一条）',       type: 'lines' },
+      { key: 'intro',  label: '自我介绍',                    type: 'textarea' }
+    ]
+  },
+  'works.js': {
+    varName: 'WORKS_SEED',
+    shape: 'array',
+    label: '作品集 · 星光陈列馆',
+    itemName: '作品',
+    fields: [
+      { key: 'title', label: '标题 *', type: 'text', required: true },
+      { key: 'cat',   label: '类型',   type: 'select', options: ['网站','设计','写作','视频','其他'] },
+      { key: 'desc',  label: '描述',   type: 'textarea' },
+      { key: 'link',  label: '链接（留空显示「链接待补充」）', type: 'text' },
+      { key: 'tags',  label: '标签（逗号或空格分隔）', type: 'tags' },
+      { key: 'date',  label: '日期小签', type: 'text' }
+    ]
+  },
+  'ideas.js': {
+    varName: 'IDEAS_SEED',
+    shape: 'array',
+    label: '灵感墙 · 捕星网',
+    itemName: '灵感',
+    fields: [
+      { key: 'title', label: '标题（选填）', type: 'text' },
+      { key: 'text',  label: '正文 *',      type: 'textarea', required: true },
+      { key: 'tags',  label: '标签（逗号或空格分隔 · 第一个标签决定卡片光晕颜色）', type: 'tags' },
+      { key: 'date',  label: '日期小签',    type: 'text' }
+    ]
+  },
+  'growth.js': {
+    varName: 'MILESTONES_SEED',
+    shape: 'array',
+    label: '成长足迹 · 航行日志',
+    itemName: '里程碑',
+    fields: [
+      { key: 'date',  label: '日期 *（YYYY-MM-DD）', type: 'date', required: true },
+      { key: 'type',  label: '类型', type: 'select', options: ['里程碑','荣誉','创作','旅行','学习','其他'] },
+      { key: 'title', label: '标题 *', type: 'text', required: true },
+      { key: 'desc',  label: '描述',  type: 'textarea' }
+    ]
+  }
+};
+
+/* ================= 令牌：仅 sessionStorage ================= */
+const TOKEN_KEY = 'isle_admin_token';
+function getToken(){ try{ return sessionStorage.getItem(TOKEN_KEY) || ''; }catch(e){ return ''; } }
+function setToken(t){ try{ sessionStorage.setItem(TOKEN_KEY, t); }catch(e){} }
+function clearToken(){ try{ sessionStorage.removeItem(TOKEN_KEY); }catch(e){} }
+
+/* ================= base64 与 UTF-8 互转（保证中文不乱码） ================= */
+function b64ToUtf8(b64){
+  const bin = atob(b64.replace(/\s/g,''));
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+function utf8ToB64(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for(let i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+/* ================= 解析与重新包壳（只动数据部分） ================= */
+function parseSeed(text, varName){
+  const m = text.match(new RegExp('const\\s+' + varName + '\\s*=\\s*([\\s\\S]*?);\\s*$'));
+  if(!m) throw new Error('文件结构不符合预期：未能找到 const ' + varName + ' = ...;');
+  let data;
+  try{
+    data = JSON.parse(m[1]);   // 严格要求标准 JSON：键名必须带双引号
+  }catch(e){
+    throw new Error('数据部分不是合法 JSON：请用纯文本编辑器打开仓库里的 data/ 文件，把 const ' + varName + ' = 后面所有键名加上双引号（如 "title": "…"）。原始错误：' + e.message);
+  }
+  if(!data || typeof data !== 'object') throw new Error('数据格式错误：解析结果不是对象或数组');
+  return data;
+}
+function buildSeed(data, varName){
+  return 'const ' + varName + ' = ' + JSON.stringify(data, null, 2) + ';\n';
+}
+
+/* ================= 当前状态 ================= */
+let curFile = null;   // 文件名，如 'about.js'
+let curSha  = null;   // 文件当前 sha
+let curData = null;   // 解析后的数据
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+
+/* ================= 提示条 ================= */
+function showMsg(kind, html){
+  const box = $('msg');
+  box.className = 'msg ' + kind;
+  box.innerHTML = html;
+}
+function showGateMsg(html){
+  const box = $('gateMsg');
+  box.className = 'msg err';
+  box.innerHTML = html;
+}
+
+/* ================= 渲染文件选择 ================= */
+function renderFiles(){
+  $('files').innerHTML = Object.keys(SCHEMA).map(f =>
+    `<button class="chip2${curFile===f?' on':''}" data-f="${f}">📄 ${esc(f)} <span style="opacity:.6">${esc(SCHEMA[f].varName)}</span></button>`
+  ).join('');
+  $('files').querySelectorAll('.chip2[data-f]').forEach(b => {
+    b.onclick = () => { curFile = b.dataset.f; curSha = null; curData = null; renderFiles(); loadFile(); };
+  });
+}
+
+/* ================= 读取文件 ================= */
+async function loadFile(){
+  const token = getToken();
+  const sch = SCHEMA[curFile];
+  showMsg('info', '正在读取 <b>' + esc(DIR + '/' + curFile) + '</b> …');
+  try{
+    const res = await fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + DIR + '/' + curFile,
+      { headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+      }});
+    if(res.status === 401 || res.status === 403){
+      showMsg('err', '❌ 令牌无效或权限不足（' + res.status + '）：请确认 Fine-grained Token 仍然有效，并且拥有本仓库的 <b>Contents: Read and write</b> 权限。');
+      return;
+    }
+    if(res.status === 404){
+      showMsg('err', '❌ 未找到目标文件（404）：请确认仓库 <b>' + esc(OWNER + '/' + REPO) + '</b> 中已存在 <b>' + esc(DIR + '/' + curFile) + '</b>（需先部署推送一次）。');
+      return;
+    }
+    if(!res.ok){
+      showMsg('err', '❌ 读取失败（HTTP ' + res.status + '）：' + esc(res.statusText || '未知错误'));
+      return;
+    }
+    const json = await res.json();
+    curSha = json.sha;
+    const text = b64ToUtf8(json.content);
+    curData = parseSeed(text, SCHEMA[curFile].varName);
+    $('formCard').style.display = '';
+    renderForm();
+    showMsg('ok', '✅ 已读取 <b>' + esc(DIR + '/' + curFile) + '</b>（sha: ' + esc(String(curSha).slice(0,7)) + '）');
+  }catch(err){
+    showMsg('err', '🌐 网络请求失败：请检查网络连接后重试。（' + esc(err && err.message ? err.message : String(err)) + '）');
+  }
+}
+
+/* ================= 生成编辑表单 ================= */
+function emptyItem(fields){
+  const o = {};
+  fields.forEach(f => { o[f.key] = f.type === 'tags' || f.type === 'lines' ? [] : ''; });
+  return o;
+}
+
+function renderForm(){
+  const sch = SCHEMA[curFile];
+  const box = $('form');
+  box.innerHTML = '';
+  const items = sch.shape === 'object' ? [curData] : curData;
+  const isArr = sch.shape === 'array';
+
+  items.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'acard';
+    const head = document.createElement('div');
+    head.className = 'chead';
+    head.innerHTML = isArr
+      ? '<h3>' + esc(sch.itemName) + ' ' + (idx+1) + '</h3>'
+      : '<h3>' + esc(sch.label) + '</h3>';
+    if(isArr){
+      const ops = document.createElement('div');
+      ops.className = 'ops';
+      ops.innerHTML =
+        '<button type="button" class="op" data-act="up" data-i="' + idx + '" title="上移">↑</button>' +
+        '<button type="button" class="op" data-act="down" data-i="' + idx + '" title="下移">↓</button>' +
+        '<button type="button" class="op danger" data-act="del" data-i="' + idx + '" title="删除">🗑</button>';
+      head.appendChild(ops);
+    }
+    card.appendChild(head);
+
+    sch.fields.forEach(f => {
+      const lb = document.createElement('label');
+      lb.textContent = f.label;
+      card.appendChild(lb);
+
+      let el;
+      if(f.type === 'textarea' || f.type === 'lines'){
+        el = document.createElement('textarea');
+        el.className = 'minput';
+        el.value = f.type === 'lines' ? (item[f.key] || []).join('\n') : (item[f.key] || '');
+        el.addEventListener('input', () => {
+          item[f.key] = f.type === 'lines'
+            ? el.value.split(/\n+/).map(s => s.trim()).filter(Boolean)
+            : el.value;
+        });
+      } else if(f.type === 'tags'){
+        el = document.createElement('input');
+        el.className = 'minput';
+        el.value = (item[f.key] || []).join(', ');
+        el.addEventListener('input', () => {
+          item[f.key] = el.value.split(/[,，、;；\s]+/).map(s => s.trim()).filter(Boolean);
+        });
+      } else if(f.type === 'select'){
+        el = document.createElement('select');
+        el.className = 'minput';
+        f.options.forEach(o => { const op = document.createElement('option'); op.value = o; op.textContent = o; el.appendChild(op); });
+        el.value = item[f.key] || f.options[0];
+        el.addEventListener('change', () => { item[f.key] = el.value; });
+      } else {
+        el = document.createElement('input');
+        el.className = 'minput';
+        if(f.type === 'date') el.type = 'date';
+        el.value = item[f.key] || '';
+        el.addEventListener('input', () => { item[f.key] = el.value; });
+      }
+      card.appendChild(el);
+    });
+
+    box.appendChild(card);
+  });
+
+  if(isArr){
+    const add = document.createElement('button');
+    add.type = 'button';
+    add.className = 'chip2 addbtn';
+    add.textContent = '＋ 新增一条';
+    add.onclick = () => { curData.push(emptyItem(sch.fields)); renderForm(); };
+    box.appendChild(add);
+  }
+}
+
+/* ================= 校验 ================= */
+function validate(sch, data){
+  const list = sch.shape === 'object' ? [data] : data;
+  if(!Array.isArray(data)) return '数据结构错误：应为' + (sch.shape === 'object' ? '对象' : '数组');
+  list.forEach((item, i) => {
+    if(!item || typeof item !== 'object' || Array.isArray(item)) throw new Error('第 ' + (i+1) + ' 条数据格式错误');
+    sch.fields.forEach(f => {
+      const v = item[f.key];
+      if(f.required && String(v ?? '').trim() === '') throw new Error('第 ' + (i+1) + ' 条：「' + f.label.replace(' *','') + '」不能为空');
+      if((f.type === 'tags' || f.type === 'lines') && !Array.isArray(v)) throw new Error('第 ' + (i+1) + ' 条：「' + f.label.replace(' *','') + '」应为数组');
+    });
+  });
+  return null;
+}
+
+/* ================= 保存 ================= */
+async function save(){
+  const sch = SCHEMA[curFile];
+  const token = getToken();
+  if(!curSha){ showMsg('err','❌ 尚未读取文件，请先点「↺ 重新读取」。'); return; }
+
+  let err = null;
+  try{ err = validate(sch, curData); }catch(e){ err = e.message; }
+  if(err){ showMsg('err','❌ JSON 校验未通过：' + esc(err)); return; }
+
+  const text = buildSeed(curData, sch.varName);
+  showMsg('info','正在提交到 GitHub …');
+  try{
+    const res = await fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + DIR + '/' + curFile, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'chore(data): 更新 ' + DIR + '/' + curFile + ' 种子数据',
+        content: utf8ToB64(text),
+        sha: curSha
+      })
+    });
+    if(res.status === 401 || res.status === 403){
+      showMsg('err','❌ 保存失败：令牌无效或权限不足（' + res.status + '）。请重新粘贴拥有 <b>Contents: Read and write</b> 权限的令牌。');
+      return;
+    }
+    if(res.status === 404){
+      showMsg('err','❌ 保存失败：路径不存在（404）。请确认仓库与 <b>' + esc(DIR + '/' + curFile) + '</b> 路径正确。');
+      return;
+    }
+    if(res.status === 409){
+      showMsg('err','❌ 保存失败：文件已被其他地方修改（409 sha 冲突）。请点「↺ 重新读取」后重新编辑。');
+      return;
+    }
+    if(!res.ok){
+      showMsg('err','❌ 保存失败（HTTP ' + res.status + '）：' + esc(res.statusText || '未知错误'));
+      return;
+    }
+    const json = await res.json();
+    curSha = json.content && json.content.sha ? json.content.sha : curSha; // 更新 sha，便于连续保存
+    showMsg('ok','🎉 已保存，1~2 分钟后全网生效');
+  }catch(e2){
+    showMsg('err','🌐 网络请求失败：请检查网络连接后重试。（' + esc(e2 && e2.message ? e2.message : String(e2)) + '）');
+  }
+}
+
+/* ================= 界面切换 ================= */
+function enterConsole(){
+  $('gate').style.display = 'none';
+  $('console').style.display = '';
+  curFile = 'about.js';
+  renderFiles();
+  loadFile();
+}
+function logout(){
+  clearToken();
+  $('console').style.display = 'none';
+  $('gate').style.display = '';
+  $('tokenInput').value = '';
+  $('gateMsg').className = 'msg';
+  $('gateMsg').innerHTML = '';
+}
+
+$('startBtn').onclick = () => {
+  const t = $('tokenInput').value.trim();
+  if(!t){ showGateMsg('请先粘贴 GitHub Fine-grained Token。'); return; }
+  setToken(t);
+  enterConsole();
+};
+$('tokenInput').addEventListener('keydown', e => { if(e.key === 'Enter') $('startBtn').click(); });
+$('saveBtn').onclick = save;
+$('reloadBtn').onclick = loadFile;
+$('logoutBtn').onclick = logout;
+
+// 表单内条目操作（上移 / 下移 / 删除）
+$('form').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]');
+  if(!b) return;
+  const i = Number(b.dataset.i);
+  const act = b.dataset.act;
+  if(act === 'up' && i > 0){ const t = curData[i]; curData[i] = curData[i-1]; curData[i-1] = t; }
+  else if(act === 'down' && i < curData.length-1){ const t = curData[i]; curData[i] = curData[i+1]; curData[i+1] = t; }
+  else if(act === 'del'){ if(!confirm('确定删除第 ' + (i+1) + ' 条？')) return; curData.splice(i,1); }
+  renderForm();
+});
+
+/* ================= 如果已有令牌（同标签页刷新）直接进入 ================= */
+(function(){
+  if(getToken()) enterConsole();
+})();
+
+/* ================= 生成星空 ================= */
+(function(){
+  const space = $('space');
+  for(let i=0;i<90;i++){
+    const s = document.createElement('div');
+    s.className = 'star' + (i < 6 ? ' big' : '');
+    const size = i < 6 ? Math.random()*1.6+2.4 : Math.random()*1.8+0.6;
+    s.style.width = s.style.height = size + 'px';
+    s.style.left = Math.random()*100 + '%';
+    s.style.top = Math.random()*100 + '%';
+    s.style.setProperty('--d', (Math.random()*4+2) + 's');
+    s.style.animationDelay = (Math.random()*5) + 's';
+    space.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
